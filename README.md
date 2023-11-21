@@ -62,6 +62,7 @@ examples themselves
 
 | Name | Version |
 |------|---------|
+| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.19.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | 5.42.0 |
 
 ## Modules
@@ -72,6 +73,10 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [cloudflare_workers_kv.actions_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
+| [cloudflare_workers_kv.webhook_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
+| [cloudflare_workers_kv_namespace.github](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv_namespace) | resource |
+| [cloudflare_accounts.mine](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/accounts) | data source |
 | [github_ip_ranges.theirs](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/ip_ranges) | data source |
 | [github_repositories.mine](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repositories) | data source |
 
@@ -79,7 +84,6 @@ No modules.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_dummy"></a> [dummy](#input\_dummy) | dummy variable | `string` | n/a | yes |
 | <a name="input_github_username"></a> [github\_username](#input\_github\_username) | Username of the github user you want to instrument. | `string` | `"brucellino"` | no |
 
 ## Outputs

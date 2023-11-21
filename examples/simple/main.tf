@@ -21,6 +21,12 @@ terraform {
   }
 }
 
+variable "domain" {
+  description = "The domain you will be deploying to. You must already own this domain."
+  default     = "brucellino.dev"
+  type        = string
+}
+
 variable "secrets_mount" {
   type        = string
   description = "Name of the vault mount where the github secrets are kept."
@@ -36,11 +42,11 @@ data "vault_kv_secret_v2" "github" {
 
 data "vault_kv_secret_v2" "cloudflare" {
   mount = "cloudflare"
-  name  = "brucellino.dev"
+  name  = var.domain
 }
 
 provider "cloudflare" {
-  api_token = data.vault_kv_secret_v2.cloudflare.data["Data"]["github_runner_token"]
+  api_token = data.vault_kv_secret_v2.cloudflare.data.github_runner_token
 }
 
 provider "github" {
@@ -54,6 +60,5 @@ output "values" {
 
 module "example" {
   source          = "../../"
-  dummy           = "test"
   github_username = "brucellino"
 }
