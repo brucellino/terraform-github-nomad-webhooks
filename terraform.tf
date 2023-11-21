@@ -8,8 +8,22 @@
 # These will be declared in the terraform document which consumes the module.
 
 terraform {
-  required_version = ">1.2.0"
+  required_version = ">1.6.0"
   required_providers {
-    # Add your required providers here.
+    # We need github to provide access to github
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0"
+    }
+    # we're going to need vault to read and write secrets
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 3.0"
+    }
+    # Cloudflare will be used to create a few
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.19.0"
+    }
   }
 }

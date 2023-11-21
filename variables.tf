@@ -6,3 +6,9 @@ variable "dummy" {
   type        = string
   description = "dummy variable"
 }
+
+variable "github_username" {
+  description = "Username of the github user you want to instrument."
+  default     = "brucellino"
+  type        = string
+}

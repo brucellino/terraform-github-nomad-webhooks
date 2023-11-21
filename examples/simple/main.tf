@@ -1,21 +1,59 @@
-# This is the default example
-# customise it as you see fit for your example usage of your module
+terraform {
+  backend "consul" {
+    path = "test_module/simple"
+  }
+  required_providers {
+    # We need github to provide access to github
+    github = {
+      source  = "integrations/github"
+      version = "~> 5.0"
+    }
+    # we're going to need vault to read and write secrets
+    vault = {
+      source  = "hashicorp/vault"
+      version = "~> 3.0"
+    }
+    # Cloudflare will be used to create a few
+    cloudflare = {
+      source  = "cloudflare/cloudflare"
+      version = "~> 4.19.0"
+    }
+  }
+}
 
-# add provider configurations here, for example:
-# provider "aws" {
-#
-# }
+variable "secrets_mount" {
+  type        = string
+  description = "Name of the vault mount where the github secrets are kept."
+  default     = "hashiatho.me-v2"
+}
 
-# Declare your backends and other terraform configuration here
-# This is an example for using the consul backend.
-# terraform {
-#   backend "consul" {
-#     path = "test_module/simple"
-#   }
-# }
+provider "vault" {}
+# Use vault to get the secrets for configuring the other providers
+data "vault_kv_secret_v2" "github" {
+  mount = var.secrets_mount
+  name  = "github"
+}
 
+data "vault_kv_secret_v2" "cloudflare" {
+  mount = "cloudflare"
+  name  = "brucellino.dev"
+}
+
+provider "cloudflare" {
+  api_token = data.vault_kv_secret_v2.cloudflare.data["Data"]["github_runner_token"]
+}
+
+provider "github" {
+  token = data.vault_kv_secret_v2.github.data.gh_token
+}
+
+output "values" {
+  value     = data.vault_kv_secret_v2.github.data.gh_token
+  sensitive = true
+}
 
 module "example" {
-  source = "../../"
-  dummy  = "test"
+  source          = "../../"
+  dummy           = "test"
+  github_username = "brucellino"
 }
