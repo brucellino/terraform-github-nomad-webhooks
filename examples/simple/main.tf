@@ -59,6 +59,7 @@ output "values" {
 }
 
 module "example" {
-  source          = "../../"
-  github_username = "brucellino"
+  source            = "../../"
+  github_username   = "brucellino"
+  cloudflare_domain = "brucellino.dev"
 }
