@@ -64,6 +64,7 @@ examples themselves
 |------|---------|
 | <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.19.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | 5.42.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 3.23.0 |
 
 ## Modules
 
@@ -73,6 +74,9 @@ No modules.
 
 | Name | Type |
 |------|------|
+| [cloudflare_access_application.nomad](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_application) | resource |
+| [cloudflare_access_group.nomad](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_group) | resource |
+| [cloudflare_access_policy.service](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/access_policy) | resource |
 | [cloudflare_worker_domain.handle_webhooks](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/worker_domain) | resource |
 | [cloudflare_worker_script.handle_webhooks](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/worker_script) | resource |
 | [cloudflare_workers_kv.actions_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
@@ -83,6 +87,7 @@ No modules.
 | [cloudflare_zone.webhook_listener](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/zone) | data source |
 | [github_ip_ranges.theirs](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/ip_ranges) | data source |
 | [github_repositories.mine](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repositories) | data source |
+| [vault_kv_secret_v2.service_token](https://registry.terraform.io/providers/hashicorp/vault/latest/docs/data-sources/kv_secret_v2) | data source |
 
 ## Inputs
 
