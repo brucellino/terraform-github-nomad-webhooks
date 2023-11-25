@@ -142,3 +142,19 @@ resource "cloudflare_access_policy" "service" {
     group         = [cloudflare_access_group.nomad.id]
   }
 }
+
+# Generate a >32byte base64 string to use at the tunnel password
+resource "random_id" "tunnel_secret" {
+  keepers = {
+    service = cloudflare_access_application.nomad.id
+  }
+  byte_length = 32
+}
+
+# Create tunnel connected to the application route
+resource "cloudflare_tunnel" "nomad" {
+  name       = "nomad"
+  account_id = data.cloudflare_accounts.mine.accounts[0].id
+  secret     = random_id.tunnel_secret.b64_std
+  config_src = "cloudflare"
+}
