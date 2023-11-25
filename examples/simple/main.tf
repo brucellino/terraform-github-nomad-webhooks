@@ -1,6 +1,6 @@
 terraform {
   backend "consul" {
-    path = "test_module/simple"
+    path = "terraform_github_nomad_webhooks/simple"
   }
   required_providers {
     # We need github to provide access to github
@@ -51,11 +51,6 @@ provider "cloudflare" {
 
 provider "github" {
   token = data.vault_kv_secret_v2.github.data.gh_token
-}
-
-output "values" {
-  value     = data.vault_kv_secret_v2.github.data.gh_token
-  sensitive = true
 }
 
 module "example" {
