@@ -1,8 +1,19 @@
 job "cloudflared" {
   datacenters = ["dc1"]
   type        = "service"
-
+  update {
+    max_parallel      = 3
+    health_check      = "checks"
+    min_healthy_time  = "10s"
+    healthy_deadline  = "5m"
+    progress_deadline = "10m"
+    auto_revert       = true
+    auto_promote      = true
+    canary            = 1
+    stagger           = "30s"
+  }
   group "nomad" {
+    count =2
     reschedule {
       attempts       = 1
       interval       = "1m"
@@ -21,7 +32,7 @@ job "cloudflared" {
       port "metrics"{}
       port "cloudflared"{}
 
-      mode = "bridge"
+      // mode = "bridge"
     }
 
     task "tunnel" {
@@ -36,14 +47,7 @@ job "cloudflared" {
           interval = "10s"
           timeout  = "2s"
           port     = "metrics"
-          path = "/"
-        }
-
-        check {
-          name     = "alive"
-          type     = "tcp"
-          interval = "10s"
-          timeout  = "2s"
+          path = "/metrics"
         }
       }
 
@@ -66,7 +70,7 @@ job "cloudflared" {
           "--loglevel",
           "info",
           "--metrics",
-          "localhost:$${NOMAD_PORT_metrics}",
+          "0.0.0.0:$${NOMAD_PORT_metrics}",
           "run",
           "--token",
           "${token}",
