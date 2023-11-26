@@ -56,6 +56,7 @@ examples themselves
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
 | <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 4.19.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
+| <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
 | <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 3.0 |
 
@@ -65,6 +66,7 @@ examples themselves
 |------|---------|
 | <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.19.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | 5.42.0 |
+| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | 2.0.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
 | <a name="provider_vault"></a> [vault](#provider\_vault) | 3.23.0 |
 
@@ -86,6 +88,7 @@ No modules.
 | [cloudflare_workers_kv.webhook_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
 | [cloudflare_workers_kv_namespace.github](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv_namespace) | resource |
 | [github_repository_webhook.cf](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_webhook) | resource |
+| [nomad_job.cloudflared](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job) | resource |
 | [random_id.tunnel_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
 | [cloudflare_accounts.mine](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/accounts) | data source |
 | [cloudflare_zone.webhook_listener](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/zone) | data source |
