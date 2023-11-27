@@ -174,9 +174,29 @@ resource "cloudflare_tunnel" "nomad" {
   config_src = "cloudflare"
 }
 
+resource "cloudflare_tunnel_config" "nomad" {
+  account_id = data.cloudflare_accounts.mine.accounts[0].id
+  tunnel_id  = cloudflare_tunnel.nomad.id
+  config {
+    ingress_rule {
+      hostname = "nomad.${var.cloudflare_domain}"
+      path     = "/"
+      service  = "http://bare:4646"
+    }
+    ingress_rule {
+      service = "http://sense:4646"
+    }
+  }
+}
+
 # Add the Nomad job for cloudflare
 resource "nomad_job" "cloudflared" {
   jobspec = templatefile("${path.module}/jobspec/tunnel-job.hcl", {
     token = cloudflare_tunnel.nomad.tunnel_token
   })
+}
+
+# Add dispatch batch job for workload
+resource "nomad_job" "runner_dispatch" {
+  jobspec = templatefile("${path.module}/jobspec/runner-dispatch.hcl", {})
 }
