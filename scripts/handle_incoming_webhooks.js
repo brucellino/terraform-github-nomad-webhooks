@@ -1,10 +1,13 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     /**
      * rawHtmlResponse returns HTML inputted directly
      * into the worker script
      * @param {string} html
      */
+    // let nomad_endpoint = await env.WORKERS.get("nomad_endpoint")
+
+
     function rawHtmlResponse(html) {
       return new Response(html, {
         headers: {
@@ -45,9 +48,17 @@ export default {
       return rawHtmlResponse(someForm);
     }
     if (request.method === "POST") {
-      const reqBody = await readRequestBody(request);
-      const retBody = `The request body sent in was ${reqBody}`;
-      return new Response(retBody);
+      let sig = await env.WORKERS.get("github_webhook_secret");
+      if (request.headers['x-hub-signature-256'] == sig) {
+        const reqBody = await readRequestBody(request);
+        const retBody = `The request body sent in was ${reqBody}`;
+        return new Response(retBody);
+      } else {
+        const retBody = `Signature didn't match`;
+        return new Response(retBody, {status: 403});
+      }
+
+
     } else if (request.method === "GET") {
       return new Response("The request was a GET");
     }
