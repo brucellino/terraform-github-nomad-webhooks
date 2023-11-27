@@ -67,6 +67,13 @@ resource "cloudflare_worker_domain" "handle_webhooks" {
   zone_id    = data.cloudflare_zone.webhook_listener.zone_id
 }
 
+# Create a secret for the webhook
+resource "random_pet" "github_secret" {
+  length    = 3
+  prefix    = "hashi"
+  separator = "_"
+}
+
 resource "github_repository_webhook" "cf" {
   for_each   = toset(data.github_repositories.mine.names)
   repository = each.value
@@ -74,11 +81,21 @@ resource "github_repository_webhook" "cf" {
     url          = "https://${cloudflare_worker_domain.handle_webhooks.hostname}"
     content_type = "json"
     insecure_ssl = false
+    secret       = random_pet.github_secret.id
   }
 
   active = true
   events = ["workflow_run", "pull_request"]
 }
+
+# Put the secret into a kv
+resource "cloudflare_workers_kv" "github_webhook_secret" {
+  account_id   = data.cloudflare_accounts.mine.accounts[0].id
+  namespace_id = cloudflare_workers_kv_namespace.github.id
+  key          = "github_webhook_secret"
+  value        = sha256(random_pet.github_secret.id)
+}
+
 
 
 # Only /16 or /24 can be used for these
