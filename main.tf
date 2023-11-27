@@ -44,7 +44,7 @@ resource "cloudflare_worker_script" "handle_webhooks" {
   name       = "github_handle_incoming_webhooks_${var.github_username}"
   content    = file("${path.module}/scripts/handle_incoming_webhooks.js")
   kv_namespace_binding {
-    name         = "KV_NAMESPACE"
+    name         = "WORKERS"
     namespace_id = cloudflare_workers_kv_namespace.github.id
   }
 
@@ -93,10 +93,8 @@ resource "cloudflare_workers_kv" "github_webhook_secret" {
   account_id   = data.cloudflare_accounts.mine.accounts[0].id
   namespace_id = cloudflare_workers_kv_namespace.github.id
   key          = "github_webhook_secret"
-  value        = sha256(random_pet.github_secret.id)
+  value        = "sha256=${sha256(random_pet.github_secret.id)}"
 }
-
-
 
 # Only /16 or /24 can be used for these
 # see https://community.cloudflare.com/t/ip-access-rule-api-error-cidr-range-firewallaccessrules-api-validation-error-invalid-ip-provided/399939/4?u=brucellino
