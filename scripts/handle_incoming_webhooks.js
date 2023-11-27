@@ -96,6 +96,15 @@ export default {
       let secret = await env.WORKERS.get("github_webhook_secret");
       let payload = await request.body
       if (verifySignature(secret, request.headers['X-Hub-Signature-256'], payload)) {
+        const payload = btoa(JSON.stringify(payload.body))
+        const dispatch = {
+          method: "POST",
+          headers: {
+            "content-type": "application/json;charset=UTF-8",
+          },
+        };
+        const nomad_response = await fetch("http://nomad.brucellino.dev/v1/job/dispatch/dispatch?Payload=" +payload, dispatch)
+        console.log(nomad_response.json())
         return new Response("OK")
       }
       else {
