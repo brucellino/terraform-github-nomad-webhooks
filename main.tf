@@ -93,7 +93,7 @@ resource "cloudflare_workers_kv" "github_webhook_secret" {
   account_id   = data.cloudflare_accounts.mine.accounts[0].id
   namespace_id = cloudflare_workers_kv_namespace.github.id
   key          = "github_webhook_secret"
-  value        = "sha256=${sha256(random_pet.github_secret.id)}"
+  value        = random_pet.github_secret.id
 }
 
 # Only /16 or /24 can be used for these
