@@ -158,3 +158,10 @@ resource "cloudflare_tunnel" "nomad" {
   secret     = random_id.tunnel_secret.b64_std
   config_src = "cloudflare"
 }
+
+# Add the Nomad job for cloudflare
+resource "nomad_job" "cloudflared" {
+  jobspec = templatefile("${path.module}/jobspec/tunnel-job.hcl", {
+    token = cloudflare_tunnel.nomad.tunnel_token
+  })
+}
