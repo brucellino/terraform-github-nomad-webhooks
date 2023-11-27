@@ -1,10 +1,57 @@
 export default {
-  async fetch(request) {
+  async fetch(request, env) {
     /**
      * rawHtmlResponse returns HTML inputted directly
      * into the worker script
      * @param {string} html
      */
+    // let nomad_endpoint = await env.WORKERS.get("nomad_endpoint")
+
+    let encoder = new TextEncoder();
+    // from https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#validating-webhook-deliveries
+    async function verifySignature(secret, header, payload) {
+      let parts = header.split("=");
+      let sigHex = parts[1];
+
+      let algorithm = { name: "HMAC", hash: { name: "SHA-256" } };
+
+      let keyBytes = encoder.encode(secret);
+      let extractable = false;
+      let key = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        algorithm,
+        extractable,
+        ["sign", "verify"]
+      );
+
+      let sigBytes = hexToBytes(sigHex);
+      let dataBytes = encoder.encode(payload);
+      let equal = await crypto.subtle.verify(
+        algorithm.name,
+        key,
+        sigBytes,
+        dataBytes
+      );
+
+      return equal;
+    }
+    // from https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#validating-webhook-deliveries
+    function hexToBytes(hex) {
+      let len = hex.length / 2;
+      let bytes = new Uint8Array(len);
+
+      let index = 0;
+      for (let i = 0; i < hex.length; i += 2) {
+        let c = hex.slice(i, i + 2);
+        let b = parseInt(c, 16);
+        bytes[index] = b;
+        index += 1;
+      }
+
+      return bytes;
+    }
+
     function rawHtmlResponse(html) {
       return new Response(html, {
         headers: {
@@ -45,11 +92,16 @@ export default {
       return rawHtmlResponse(someForm);
     }
     if (request.method === "POST") {
-      const reqBody = await readRequestBody(request);
-      const retBody = `The request body sent in was ${reqBody}`;
-      return new Response(retBody);
-    } else if (request.method === "GET") {
-      return new Response("The request was a GET");
+      // Get the secret from KV
+      let secret = await env.WORKERS.get("github_webhook_secret");
+      let payload = await request.body
+      if (verifySignature(secret, request.headers['X-Hub-Signature-256'], payload)) {
+        return new Response("OK")
+      }
+      else {
+        return new Response("Failed to verify Signature", { status: 403})
+      }
+
     }
   },
 };

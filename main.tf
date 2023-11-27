@@ -44,7 +44,7 @@ resource "cloudflare_worker_script" "handle_webhooks" {
   name       = "github_handle_incoming_webhooks_${var.github_username}"
   content    = file("${path.module}/scripts/handle_incoming_webhooks.js")
   kv_namespace_binding {
-    name         = "KV_NAMESPACE"
+    name         = "WORKERS"
     namespace_id = cloudflare_workers_kv_namespace.github.id
   }
 
@@ -67,6 +67,13 @@ resource "cloudflare_worker_domain" "handle_webhooks" {
   zone_id    = data.cloudflare_zone.webhook_listener.zone_id
 }
 
+# Create a secret for the webhook
+resource "random_pet" "github_secret" {
+  length    = 3
+  prefix    = "hashi"
+  separator = "_"
+}
+
 resource "github_repository_webhook" "cf" {
   for_each   = toset(data.github_repositories.mine.names)
   repository = each.value
@@ -74,12 +81,20 @@ resource "github_repository_webhook" "cf" {
     url          = "https://${cloudflare_worker_domain.handle_webhooks.hostname}"
     content_type = "json"
     insecure_ssl = false
+    secret       = random_pet.github_secret.id
   }
 
   active = true
   events = ["workflow_run", "pull_request"]
 }
 
+# Put the secret into a kv
+resource "cloudflare_workers_kv" "github_webhook_secret" {
+  account_id   = data.cloudflare_accounts.mine.accounts[0].id
+  namespace_id = cloudflare_workers_kv_namespace.github.id
+  key          = "github_webhook_secret"
+  value        = random_pet.github_secret.id
+}
 
 # Only /16 or /24 can be used for these
 # see https://community.cloudflare.com/t/ip-access-rule-api-error-cidr-range-firewallaccessrules-api-validation-error-invalid-ip-provided/399939/4?u=brucellino
