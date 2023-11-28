@@ -146,8 +146,8 @@ resource "cloudflare_access_group" "nomad" {
 resource "cloudflare_access_policy" "service" {
   name           = "ServiceWorker"
   application_id = cloudflare_access_application.nomad.id
-  decision       = "allow"
-  precedence     = "10"
+  decision       = "non_identity"
+  precedence     = "1"
   account_id     = data.cloudflare_accounts.mine.accounts[0].id
   require {
     any_valid_service_token = true
