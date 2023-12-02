@@ -85,7 +85,7 @@ resource "github_repository_webhook" "cf" {
   }
 
   active = true
-  events = ["workflow_run", "pull_request"]
+  events = ["workflow_run", "pull_request", "workflow_job"]
 }
 
 # Put the secret into a kv
