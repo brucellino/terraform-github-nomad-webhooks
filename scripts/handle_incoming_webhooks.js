@@ -93,28 +93,52 @@ export default {
     }
     if (request.method === "POST") {
       // Get the secret from KV
-      let secret = await env.WORKERS.get("github_webhook_secret");
-      let payload = await request.json()
-      if (verifySignature(secret, request.headers['X-Hub-Signature-256'], payload)) {
-        const access_client_id = env.CF_ACCESS_CLIENT_ID;
-        const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
-        const data = btoa(JSON.stringify(payload['zen']));
-        const dispatch = {
-          method: "POST",
-          headers: {
-            "content-type": "application/json;charset=UTF-8",
-            "CF-Access-Client-Id": access_client_id,
-            "CF-Access-Client-Secret": access_client_secret,
-          },
-          body: JSON.stringify({
-            "Payload": data
-          }),
-        };
-        const nomad_response = await fetch("https://nomad.brucellino.dev/v1/job/dispatch/dispatch", dispatch);
-        const nomad_res = await readRequestBody(nomad_response);
-        console.log(nomad_res);
-        // console.log(JSON.stringify(await nomad_response.Response.json()))
-        return new Response("OK");
+      const secret = await env.WORKERS.get("github_webhook_secret");
+      const _event = request.headers.get("x-github-event");
+      console.log(_event);
+      if (_event == "workflow_run") {
+        console.log("This was a workflow run")
+        const payload = await request.json();
+        // Verify the Payload using the webhook secret as key
+        if (
+          verifySignature(
+            secret,
+            request.headers["X-Hub-Signature-256"],
+            payload
+          )
+        ) {
+          // Get headers and see what kind of event this was
+          const access_client_id = env.CF_ACCESS_CLIENT_ID;
+          const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
+          if (payload.action == "requested") {
+            const data = btoa(JSON.stringify({
+              repo: payload.repository.full_name,
+              fork: payload.repository.fork,
+              job: payload.workflow_job,
+            }))
+            // const data = btoa(JSON.stringify(payload["zen"]));
+
+            const dispatch = {
+              method: "POST",
+              headers: {
+                "content-type": "application/json;charset=UTF-8",
+                "CF-Access-Client-Id": access_client_id,
+                "CF-Access-Client-Secret": access_client_secret,
+              },
+              body: JSON.stringify({
+                Payload: data,
+              }),
+            };
+            const nomad_response = await fetch(
+              "https://nomad.brucellino.dev/v1/job/dispatch/dispatch",
+              dispatch
+            );
+            const nomad_res = await readRequestBody(nomad_response);
+            console.log(nomad_res);
+          }
+          // console.log(JSON.stringify(await nomad_response.Response.json()))
+          return new Response("OK");
+        }
       }
       else {
         return new Response("Failed to verify Signature", { status: 403})
