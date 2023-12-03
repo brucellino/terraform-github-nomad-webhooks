@@ -11,3 +11,9 @@ variable "cloudflare_domain" {
   description = "Name of the cloudflare Zone you own which we will deploy workers to."
   type        = string
 }
+
+variable "runner_version" {
+  type        = string
+  default     = "2.311.0"
+  description = "Version of the Github self-hosted runner to use"
+}

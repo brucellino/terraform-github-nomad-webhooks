@@ -4,6 +4,7 @@ data "github_repositories" "mine" {
   query = "user:${var.github_username} archived:false"
 }
 
+
 # We will use these IP ranges to tune our ZTA later
 data "github_ip_ranges" "theirs" {}
 
@@ -17,6 +18,11 @@ data "cloudflare_zone" "webhook_listener" {
 data "vault_kv_secret_v2" "service_token" {
   mount = "cloudflare"
   name  = var.cloudflare_domain
+}
+
+data "vault_kv_secret_v2" "github_pat" {
+  mount = "kv"
+  name  = "github_runner/personal"
 }
 
 resource "cloudflare_workers_kv_namespace" "github" {
@@ -72,6 +78,9 @@ resource "random_pet" "github_secret" {
   length    = 3
   prefix    = "hashi"
   separator = "_"
+  keepers = {
+    "repo" = data.github_repositories.mine.id
+  }
 }
 
 resource "github_repository_webhook" "cf" {
@@ -184,7 +193,7 @@ resource "cloudflare_tunnel_config" "nomad" {
       service  = "http://bare:4646"
     }
     ingress_rule {
-      service = "http://sense:4646"
+      service = "http://bare:4646"
     }
   }
 }
@@ -198,5 +207,18 @@ resource "nomad_job" "cloudflared" {
 
 # Add dispatch batch job for workload
 resource "nomad_job" "runner_dispatch" {
-  jobspec = templatefile("${path.module}/jobspec/runner-dispatch.hcl", {})
+  jobspec = templatefile("${path.module}/jobspec/runner-dispatch.hcl.tmpl", {
+    job_name       = "github-runner-on-demand",
+    runner_version = var.runner_version,
+    # runner_label   = "hah,self-hosted,hashi-at-home",
+    # check_token = data.vault_kv_secret_v2.github_pat.data.token
+  })
+}
+
+# Put the job name in KV too.
+resource "cloudflare_workers_kv" "nomad_job" {
+  account_id   = data.cloudflare_accounts.mine.accounts[0].id
+  namespace_id = cloudflare_workers_kv_namespace.github.id
+  key          = "nomad_job"
+  value        = nomad_job.runner_dispatch.name
 }
