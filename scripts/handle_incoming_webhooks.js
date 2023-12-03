@@ -6,6 +6,7 @@ export default {
      * @param {string} html
      */
     // let nomad_endpoint = await env.WORKERS.get("nomad_endpoint")
+    const nomad_job = await env.WORKERS.get("nomad_job");
 
     let encoder = new TextEncoder();
     // from https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#validating-webhook-deliveries
@@ -66,8 +67,12 @@ export default {
      * @param {Request} request the incoming request to read from
      */
     async function readRequestBody(request) {
-      const contentType = request.headers.get("content-type");
-      if (contentType.includes("application/json")) {
+      console.log("getting request body");
+      const contentType = request.headers.get("Content-Type");
+      console.log(contentType);
+      if (contentType == null) {
+        console.log(request.status);
+      } else if (contentType.includes("application/json")) {
         return JSON.stringify(await request.json());
       } else if (contentType.includes("application/text")) {
         return request.text();
@@ -83,6 +88,7 @@ export default {
       } else {
         // Perhaps some other type of data was submitted in the form
         // like an image, or some other binary data.
+        console.log(request.status)
         return "a file";
       }
     }
@@ -91,13 +97,15 @@ export default {
     if (url.includes("form")) {
       return rawHtmlResponse(someForm);
     }
-    if (request.method === "POST") {
+
+    if (request.method === "GET") {
+      return new Response("OK", { status: 226 });
+    } else if (request.method === "POST") {
       // Get the secret from KV
       const secret = await env.WORKERS.get("github_webhook_secret");
       const _event = request.headers.get("x-github-event");
-      console.log(_event);
-      if (_event == "workflow_run") {
-        console.log("This was a workflow run")
+      if (_event == "workflow_run" || _event == "workflow_job") {
+        console.log(`This was a ${_event} event`);
         const payload = await request.json();
         // Verify the Payload using the webhook secret as key
         if (
@@ -108,29 +116,48 @@ export default {
           )
         ) {
           // Get headers and see what kind of event this was
+          console.log("Payload verified");
           const access_client_id = env.CF_ACCESS_CLIENT_ID;
           const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
-          if (payload.action == "requested") {
-            const data = btoa(JSON.stringify({
-              repo: payload.repository.full_name,
-              fork: payload.repository.fork,
-              job: payload.workflow_job,
-            }))
+          const permitted_actions = ["queued"];
+          const permitted_labels = ["self-hosted", "hah"]
+          const selected = permitted_labels.some(r => payload.workflow_job.labels(r))
+          console.log(selected)
+          if (permitted_actions.includes(payload.action)) {
+            console.log(`${payload.action}`)
+            const data = btoa(
+              JSON.stringify({
+                repo: payload.repository.full_name,
+                fork: payload.repository.fork,
+                job: payload.workflow_job.name,
+                run_id: payload.workflow_job.run_id
+              })
+            );
             // const data = btoa(JSON.stringify(payload["zen"]));
 
             const dispatch = {
               method: "POST",
               headers: {
-                "content-type": "application/json;charset=UTF-8",
+                "Content-Type": "application/json;charset=UTF-8",
                 "CF-Access-Client-Id": access_client_id,
                 "CF-Access-Client-Secret": access_client_secret,
               },
               body: JSON.stringify({
                 Payload: data,
+                Meta: {
+                  REPO_FULL_NAME: payload.repository.full_name,
+                  REPO_SHORT_NAME: payload.repository.name,
+                  WORKFLOW_RUN: (payload.workflow_job.run_id).toString()
+                },
               }),
             };
+            console.log(dispatch);
+            console.log(
+              "https://nomad.brucellino.dev/v1/job/" + nomad_job + '/dispatch',
+              dispatch
+            );
             const nomad_response = await fetch(
-              "https://nomad.brucellino.dev/v1/job/dispatch/dispatch",
+              "https://nomad.brucellino.dev/v1/job/" + nomad_job + '/dispatch',
               dispatch
             );
             const nomad_res = await readRequestBody(nomad_response);
@@ -139,11 +166,9 @@ export default {
           // console.log(JSON.stringify(await nomad_response.Response.json()))
           return new Response("OK");
         }
+      } else {
+        return new Response("Failed to verify Signature", { status: 403 });
       }
-      else {
-        return new Response("Failed to verify Signature", { status: 403})
-      }
-
     }
   },
 };
