@@ -14,22 +14,22 @@ repos:
       - id: detect-secrets
         args: ["--baseline", ".secrets.baseline"]
   - repo: https://github.com/antonbabenko/pre-commit-terraform
-    rev: v1.83.5
+    rev: v1.86.0
     hooks:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_tfsec
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.16.0
+    rev: v0.17.0
     hooks:
       - id: terraform-docs-go
         args: ["markdown", "--output-file", "README.md", "."]
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.27.1
+    rev: 0.27.3
     hooks:
       - id: check-github-workflows
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.8.0
+    rev: v9.10.0
     hooks:
       - id: commitlint
         additional_dependencies: ['@commitlint/config-conventional']

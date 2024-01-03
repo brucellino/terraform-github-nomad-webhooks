@@ -53,6 +53,10 @@ provider "github" {
   token = data.vault_kv_secret_v2.github.data.gh_token
 }
 
+provider "nomad" {
+
+}
+
 module "example" {
   source            = "../../"
   github_username   = "brucellino"
