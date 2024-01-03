@@ -63,6 +63,12 @@ resource "cloudflare_worker_script" "handle_webhooks" {
     name = "CF_ACCESS_CLIENT_SECRET"
     text = data.vault_kv_secret_v2.service_token.data.cf_access_client_secret
   }
+
+  # Add nomad acl token to secret
+  secret_text_binding {
+    name = "NOMAD_ACL_TOKEN"
+    text = data.vault_kv_secret_v2.service_token.data.nomad_acl_token
+  }
   module = true
 }
 

@@ -5,6 +5,10 @@ job "${job_name}" {
   }
 
   constraint {
+    attribute = "$${attr.cpu.arch}"
+    value = "amd64"
+  }
+  constraint {
     attribute = "$${attr.unique.storage.bytesfree}"
     operator = ">="
     value = "30000000"
@@ -39,7 +43,7 @@ job "${job_name}" {
 
       driver = "raw_exec"
       artifact {
-        source = "https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-linux-$${attr.cpu.arch}-${runner_version}.tar.gz"
+        source = "https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-linux-x64-${runner_version}.tar.gz"
         destination = "$${NOMAD_ALLOC_DIR}/actions-runner"
         mode = "dir"
       }
