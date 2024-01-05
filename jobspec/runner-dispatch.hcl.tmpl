@@ -29,8 +29,8 @@ job "${job_name}" {
     }
     task "run" {
       resources {
-        cores = 1
-        memory = 512
+        cpu = 200
+        memory = 2048
       }
       env {
         ARCH = "$${attr.cpu.arch}"
