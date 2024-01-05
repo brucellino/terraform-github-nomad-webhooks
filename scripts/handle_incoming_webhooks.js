@@ -119,10 +119,14 @@ export default {
           console.log("Payload verified");
           const access_client_id = env.CF_ACCESS_CLIENT_ID;
           const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
+          const nomad_acl_token = env.NOMAD_ACL_TOKEN;
           const permitted_actions = ["queued"];
           const permitted_labels = ["self-hosted", "hah"]
-          const selected = permitted_labels.some(r => payload.workflow_job.labels(r))
-          console.log(selected)
+          if (_event == "workflow_job") {
+            const selected = permitted_labels.some(r => payload.workflow_job.labels)
+            console.log(selected)
+          }
+
           if (permitted_actions.includes(payload.action)) {
             console.log(`${payload.action}`)
             const data = btoa(
@@ -138,6 +142,7 @@ export default {
             const dispatch = {
               method: "POST",
               headers: {
+                "Authorization":  "Bearer " + nomad_acl_token,
                 "Content-Type": "application/json;charset=UTF-8",
                 "CF-Access-Client-Id": access_client_id,
                 "CF-Access-Client-Secret": access_client_secret,
