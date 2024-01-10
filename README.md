@@ -54,7 +54,7 @@ examples themselves
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
-| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 4.19.0 |
+| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 4.22.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
 | <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.0.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
@@ -64,10 +64,10 @@ examples themselves
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.19.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | 5.42.0 |
+| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.22.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 5.43.0 |
 | <a name="provider_nomad"></a> [nomad](#provider\_nomad) | 2.0.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | 3.5.1 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.0 |
 | <a name="provider_vault"></a> [vault](#provider\_vault) | 3.23.0 |
 
 ## Modules
