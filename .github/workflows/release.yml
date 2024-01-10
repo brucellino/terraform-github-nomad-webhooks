@@ -30,7 +30,7 @@ jobs:
           curl -fSL https://releases.hashicorp.com/terraform/1.6.2/terraform_1.6.2_linux_amd64.zip \
           | gunzip -> terraform ; chmod u+x terraform
       - name: Init terraform
-        run: ./terraform -chdir=examples/${{ matrix.example }} init
+        run: ./terraform -chdir=examples/${{ matrix.example }} init -upgrade
       - name: Validate terraform
         run: ./terraform -chdir=examples/${{ matrix.example }} validate
   release:
