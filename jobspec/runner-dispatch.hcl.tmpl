@@ -1,0 +1,112 @@
+job "${job_name}" {
+  constraint {
+    attribute = "$${attr.driver.docker}"
+    operator = "is_set"
+  }
+
+  constraint {
+    attribute = "$${attr.cpu.arch}"
+    value = "amd64"
+  }
+  constraint {
+    attribute = "$${attr.unique.storage.bytesfree}"
+    operator = ">="
+    value = "30000000"
+  }
+
+  type = "batch"
+  parameterized {
+    payload = "required"
+    meta_required = ["REPO_FULL_NAME", "REPO_SHORT_NAME", "WORKFLOW_RUN"]
+  }
+  name = "${job_name}"
+
+  datacenters = ["dc1"]
+
+  group "personal" {
+    reschedule {
+      attempts = 0
+    }
+    task "run" {
+      resources {
+        cpu = 200
+        memory = 2048
+      }
+      env {
+        ARCH = "$${attr.cpu.arch}"
+      }
+      vault {
+        policies      = ["read-only"]
+        change_mode   = "signal"
+        change_signal = "SIGHUP"
+      }
+
+      driver = "raw_exec"
+      artifact {
+        source = "https://github.com/actions/runner/releases/download/v${runner_version}/actions-runner-linux-x64-${runner_version}.tar.gz"
+        destination = "$${NOMAD_ALLOC_DIR}/actions-runner"
+        mode = "dir"
+      }
+      restart {
+        attempts = 0
+      }
+
+      template {
+        data = <<EOT
+{{ with secret "github_personal_tokens/token" "installation_id=44668070" }}
+GH_TOKEN={{- .Data.token -}}
+{{ end }}
+        EOT
+        destination = ".env"
+        env = true
+      }
+
+      template {
+        data = <<EOT
+#!/bin/bash
+# Get GHA registration token
+curl -L \
+  -X POST \
+  -H "Accept: application/vnd.github+json" \
+  -H "Authorization: Bearer $GH_TOKEN"\
+  -H "X-GitHub-Api-Version: 2022-11-28" \
+  https://api.github.com/repos/{{ env "NOMAD_META_REPO_FULL_NAME" }}/actions/runners/registration-token | jq -r .token > {{ env "NOMAD_ALLOC_DIR" }}/.runner_registration_token
+
+RUNNER_ALLOW_RUNASROOT=1 \
+{{ env "NOMAD_ALLOC_DIR" }}/actions-runner/config.sh \
+  --unattended \
+  --url https://github.com/{{ env "NOMAD_META_REPO_FULL_NAME" }} \
+  --token $(cat {{ env "NOMAD_ALLOC_DIR" }}/.runner_registration_token) \
+  --labels hah,{{ env "attr.cpu.arch" }},{{ env "NOMAD_META_WORKFLOW_RUN" }} \
+  --name {{ env "attr.unique.hostname" }}-{{ env "NOMAD_META_WORKFLOW_RUN" }} \
+  --ephemeral
+
+RUNNER_ALLOW_RUNASROOT=1 {{ env "NOMAD_ALLOC_DIR" }}/actions-runner/run.sh
+        EOT
+        destination = "$${NOMAD_ALLOC_DIR}/start.sh"
+        perms = "0777"
+      }
+      config {
+        command = "$${NOMAD_ALLOC_DIR}/start.sh"
+      }
+    }
+    task "remove" {
+      lifecycle {
+        hook = "poststop"
+        sidecar = false
+      }
+      env {
+        RUNNER_ALLOW_RUNASROOT=1
+      }
+      driver = "raw_exec"
+      config {
+        command = "$${NOMAD_ALLOC_DIR}/actions-runner/config.sh"
+        args = [
+          "remove",
+          "--token",
+          "$(cat $${NOMAD_ALLOC_DIR}/.runner_registration_token)"
+        ]
+      }
+    } // remove task
+  } // task group
+}

@@ -16,7 +16,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4.19.0"
+      version = "~> 4.22.0"
     }
   }
 }
@@ -51,6 +51,10 @@ provider "cloudflare" {
 
 provider "github" {
   token = data.vault_kv_secret_v2.github.data.gh_token
+}
+
+provider "nomad" {
+
 }
 
 module "example" {
