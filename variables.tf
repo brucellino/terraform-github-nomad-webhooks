@@ -14,6 +14,6 @@ variable "cloudflare_domain" {
 
 variable "runner_version" {
   type        = string
-  default     = "2.311.0"
+  default     = "2.312.0"
   description = "Version of the Github self-hosted runner to use"
 }
