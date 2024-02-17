@@ -13,7 +13,7 @@ terraform {
     # We need github to provide access to github
     github = {
       source  = "integrations/github"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     # we're going to need vault to read and write secrets
     vault = {
