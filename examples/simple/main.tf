@@ -6,7 +6,7 @@ terraform {
     # We need github to provide access to github
     github = {
       source  = "integrations/github"
-      version = "~> 5.0"
+      version = "~> 6.0"
     }
     # we're going to need vault to read and write secrets
     vault = {
@@ -16,7 +16,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4.23.0"
+      version = "~> 4.0"
     }
   }
 }

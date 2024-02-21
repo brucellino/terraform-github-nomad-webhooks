@@ -54,8 +54,8 @@ examples themselves
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
-| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 4.23.0 |
-| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 5.0 |
+| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 4.25.0 |
+| <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.1.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
 | <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 3.0 |
