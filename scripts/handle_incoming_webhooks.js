@@ -104,7 +104,7 @@ export default {
       // Get the secret from KV
       const secret = await env.WORKERS.get("github_webhook_secret");
       const _event = request.headers.get("x-github-event");
-      if (_event == "workflow_run" || _event == "workflow_job") {
+      if ( _event == "workflow_job") {
         console.log(`This was a ${_event} event`);
         const payload = await request.json();
         // Verify the Payload using the webhook secret as key
@@ -121,20 +121,21 @@ export default {
           const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
           const nomad_acl_token = env.NOMAD_ACL_TOKEN;
           const permitted_actions = ["queued"];
-          const permitted_labels = ["self-hosted", "hah"]
-          if (_event == "workflow_job") {
-            const selected = permitted_labels.some(r => payload.workflow_job.labels)
-            console.log(selected)
-          }
-
-          if (permitted_actions.includes(payload.action)) {
-            console.log(`${payload.action}`)
+          const permitted_labels = ["self-hosted", "hah"];
+          const selected = permitted_labels.some(
+            (r) => payload.workflow_job.labels
+          );
+          console.log(selected);
+          if (selected) {
+            // if (permitted_actions.includes(payload.action)) {
+            console.log(`${payload.action}`);
             const data = btoa(
               JSON.stringify({
                 repo: payload.repository.full_name,
                 fork: payload.repository.fork,
                 job: payload.workflow_job.name,
-                run_id: payload.workflow_job.run_id
+                run_id: payload.workflow_job.run_id,
+                labels: payload.workflow_job.labels,
               })
             );
             // const data = btoa(JSON.stringify(payload["zen"]));
@@ -142,7 +143,7 @@ export default {
             const dispatch = {
               method: "POST",
               headers: {
-                "Authorization":  "Bearer " + nomad_acl_token,
+                "Authorization": "Bearer " + nomad_acl_token,
                 "Content-Type": "application/json;charset=UTF-8",
                 "CF-Access-Client-Id": access_client_id,
                 "CF-Access-Client-Secret": access_client_secret,
@@ -152,17 +153,17 @@ export default {
                 Meta: {
                   REPO_FULL_NAME: payload.repository.full_name,
                   REPO_SHORT_NAME: payload.repository.name,
-                  WORKFLOW_RUN: (payload.workflow_job.run_id).toString()
+                  WORKFLOW_RUN: (payload.workflow_job.run_id).toString(),
                 },
               }),
-            };
+            }; // dispatch body
             console.log(dispatch);
             console.log(
-              "https://nomad.brucellino.dev/v1/job/" + nomad_job + '/dispatch',
+              "https://nomad.brucellino.dev/v1/job/" + nomad_job + "/dispatch",
               dispatch
             );
             const nomad_response = await fetch(
-              "https://nomad.brucellino.dev/v1/job/" + nomad_job + '/dispatch',
+              "https://nomad.brucellino.dev/v1/job/" + nomad_job + "/dispatch",
               dispatch
             );
             const nomad_res = await readRequestBody(nomad_response);
@@ -170,9 +171,12 @@ export default {
           }
           // console.log(JSON.stringify(await nomad_response.Response.json()))
           return new Response("OK");
-        }
+        } else {
+          return new Response("Failed to verify Signature", { status: 403 });
+        }// If (verify signature)
       } else {
-        return new Response("Failed to verify Signature", { status: 403 });
+        console.log("Not a workflow job event");
+        return new Response("OK")
       }
     }
   },
