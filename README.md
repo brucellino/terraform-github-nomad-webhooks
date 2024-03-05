@@ -108,7 +108,7 @@ No modules.
 |------|-------------|------|---------|:--------:|
 | <a name="input_cloudflare_domain"></a> [cloudflare\_domain](#input\_cloudflare\_domain) | Name of the cloudflare Zone you own which we will deploy workers to. | `string` | n/a | yes |
 | <a name="input_github_username"></a> [github\_username](#input\_github\_username) | Username of the github user you want to instrument. | `string` | `"brucellino"` | no |
-| <a name="input_runner_version"></a> [runner\_version](#input\_runner\_version) | Version of the Github self-hosted runner to use | `string` | `"2.312.0"` | no |
+| <a name="input_runner_version"></a> [runner\_version](#input\_runner\_version) | Version of the Github self-hosted runner to use | `string` | `"2.314.1"` | no |
 
 ## Outputs
 
