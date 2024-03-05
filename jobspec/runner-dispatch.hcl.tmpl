@@ -17,7 +17,7 @@ job "${job_name}" {
   type = "batch"
   parameterized {
     payload = "required"
-    meta_required = ["REPO_FULL_NAME", "REPO_SHORT_NAME", "WORKFLOW_RUN"]
+    meta_required = ["REPO_FULL_NAME", "REPO_SHORT_NAME", "WORKFLOW_RUN", "DELIVERY_ID"]
   }
   name = "${job_name}"
 
