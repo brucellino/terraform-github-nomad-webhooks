@@ -32,7 +32,7 @@ repos:
     rev: v9.13.0
     hooks:
       - id: commitlint
-        additional_dependencies: ['@commitlint/config-conventional@v18.6.2']
+        additional_dependencies: ['@commitlint/config-conventional@latest']
 
 ci:
   skip: [terraform_fmt, terraform_validate, terraform_tfsec, commitlint]

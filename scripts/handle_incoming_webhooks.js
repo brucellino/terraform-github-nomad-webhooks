@@ -104,6 +104,7 @@ export default {
       // Get the secret from KV
       const secret = await env.WORKERS.get("github_webhook_secret");
       const _event = request.headers.get("x-github-event");
+      const _delivery = request.headers.get("x-github-delivery")
       if ( _event == "workflow_job") {
         console.log(`This was a ${_event} event`);
         const payload = await request.json();
@@ -121,12 +122,19 @@ export default {
           const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
           const nomad_acl_token = env.NOMAD_ACL_TOKEN;
           const permitted_actions = ["queued"];
+          console.log(payload.action);
+          const action_ok = permitted_actions.some((r) => payload.action);
           const permitted_labels = ["self-hosted", "hah"];
-          const selected = permitted_labels.some(
-            (r) => payload.workflow_job.labels
+          // const labels_ok = permitted_labels.some(
+          //   (r) => payload.workflow_job.labels
+          // );
+          const labels_ok = payload.workflow_job.labels.some(
+            (r) => permitted_labels.includes(r)
           );
-          console.log(selected);
-          if (selected) {
+          console.log("Labels: " + labels_ok + " Actions: " + action_ok);
+          console.log(labels_ok && action_ok);
+          if (labels_ok && action_ok) {
+            console.log("constructing message");
             // if (permitted_actions.includes(payload.action)) {
             console.log(`${payload.action}`);
             const data = btoa(
@@ -143,7 +151,7 @@ export default {
             const dispatch = {
               method: "POST",
               headers: {
-                "Authorization": "Bearer " + nomad_acl_token,
+                Authorization: "Bearer " + nomad_acl_token,
                 "Content-Type": "application/json;charset=UTF-8",
                 "CF-Access-Client-Id": access_client_id,
                 "CF-Access-Client-Secret": access_client_secret,
@@ -153,7 +161,8 @@ export default {
                 Meta: {
                   REPO_FULL_NAME: payload.repository.full_name,
                   REPO_SHORT_NAME: payload.repository.name,
-                  WORKFLOW_RUN: (payload.workflow_job.run_id).toString(),
+                  WORKFLOW_RUN: payload.workflow_job.run_id.toString(),
+                  DELIVERY_ID: _delivery,
                 },
               }),
             }; // dispatch body
