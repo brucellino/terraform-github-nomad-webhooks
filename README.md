@@ -1,32 +1,13 @@
-[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/brucellino/tfmod-template/main.svg)](https://results.pre-commit.ci/latest/github/brucellino/tfmod-template/main) [![semantic-release: conventional](https://img.shields.io/badge/semantic--release-conventional-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit) [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/brucellino/terraform-github-nomad-webhooks/main.svg)](https://results.pre-commit.ci/latest/github/brucellino/terraform-github-nomad-template/main) [![semantic-release: conventional](https://img.shields.io/badge/semantic--release-conventional-e10079?logo=semantic-release)](https://github.com/semantic-release/semantic-release)
 
-# tfmod-template
+# Github Runners on Nomad
 
-<!-- Delete this section when using the template repository -->
-
-This is the template repository for my terraform modules.
-It attempts to follow the [default structure](https://www.terraform.io/language/modules/develop/structure) for terraform modules.
-
-It is designed to speed up development of new terraform modules by providing:
-
-1. basic terraform setup for backend, providers, _etc_.
-  1. the default required version for terraform is `>1.2.0`
-1. common pre-commit hooks configuration
-1. semantic release configuration
-1. examples directory for testing and demonstration
-1. default github actions workflows for testing and releasing
-
-## How to use
-
-<!-- Delete this section when using the template repository -->
-
-If you want to make a new terraform module from scratch:
-
-1. create a new repository using this one as template
-1. delete the sections commented with `<!-- Delete this section when using the template repository -->`
-1. update `terraform.tf` to declare the module's required providers
-1. add the examples you need in `examples/<your example>`
-1. update the test workflow in `.github/workflows/test.yml` to reflect your examples
+This is a terraform module for deploying a Nomad parametrised job which can spawn Github Actions runners.
+The Nomad API is exposed and protected via Cloudflare.
+This module terraforms your Github repos adding webhooks to deliver payload to a Cloudflare worker.
+The worker validates the payload and if the event corresponds to desired events sends a dispatch payload to Nomad to start the Github runner.
+The runner job has a post-stop task to remove the runner once the Action has completed.
+This results in scale to zero github runners, truly minimising cost and removing constraints on billable Github Actions time in GitHub accounts.
 
 ## Pre-commit hooks
 
