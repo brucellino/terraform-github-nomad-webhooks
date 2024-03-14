@@ -18,7 +18,7 @@ terraform {
     # we're going to need vault to read and write secrets
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.0"
+      version = "~> 4.0"
     }
     # Cloudflare will be used to create a few
     cloudflare = {
