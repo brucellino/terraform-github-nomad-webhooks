@@ -35,4 +35,4 @@ repos:
         additional_dependencies: ['@commitlint/config-conventional@latest']
 
 ci:
-  skip: [terraform_fmt, terraform_validate, terraform_tfsec, commitlint]
+  skip: [terraform_fmt, terraform_validate, terraform_trivy, commitlint]
