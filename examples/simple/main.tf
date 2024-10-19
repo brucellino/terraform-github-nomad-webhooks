@@ -6,17 +6,21 @@ terraform {
     # We need github to provide access to github
     github = {
       source  = "integrations/github"
-      version = "~> 6.0"
+      version = "~> 6"
     }
     # we're going to need vault to read and write secrets
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 3.0"
+      version = "~> 4"
     }
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4.0"
+      version = "~> 4"
+    }
+    nomad = {
+      source  = "hashicorp/nomad"
+      version = "~> 2"
     }
   }
 }
@@ -53,12 +57,33 @@ provider "github" {
   token = data.vault_kv_secret_v2.github.data.gh_token
 }
 
-provider "nomad" {
-
+provider "github" {
+  token = data.vault_kv_secret_v2.github.data.gh_token
+  owner = "hashi-at-home"
+  alias = "hah"
 }
 
-module "example" {
+provider "nomad" {}
+
+moved {
+  from = module.example
+  to   = module.mine
+}
+module "mine" {
   source            = "../../"
+  org               = false
+  include_archived  = false
   github_username   = "brucellino"
   cloudflare_domain = "brucellino.dev"
+}
+
+module "hah" {
+  providers = {
+    github = github.hah
+  }
+  source            = "../../"
+  github_username   = "hashi-at-home"
+  org               = true
+  include_archived  = false
+  cloudflare_domain = "hashiatho.me"
 }
