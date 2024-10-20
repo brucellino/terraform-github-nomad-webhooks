@@ -32,6 +32,7 @@ repos:
     rev: v9.17.0
     hooks:
       - id: commitlint
+        language_version: 22.8.0
         additional_dependencies: ['@commitlint/config-conventional@latest']
 
 ci:
