@@ -81,14 +81,3 @@ module "mine" {
   github_username   = "brucellino"
   cloudflare_domain = var.domain
 }
-
-module "hah" {
-  providers = {
-    github = github.hah
-  }
-  source            = "../../"
-  github_username   = "hashi-at-home"
-  org               = true
-  include_archived  = false
-  cloudflare_domain = var.domain
-}
