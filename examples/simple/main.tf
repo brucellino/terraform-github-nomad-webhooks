@@ -1,4 +1,5 @@
 terraform {
+  required_version = "~> 1.9"
   backend "consul" {
     path = "terraform_github_nomad_webhooks/simple"
   }
@@ -55,6 +56,7 @@ provider "cloudflare" {
 
 provider "github" {
   token = data.vault_kv_secret_v2.github.data.gh_token
+  alias = "personal"
 }
 
 provider "github" {
@@ -70,11 +72,14 @@ moved {
   to   = module.mine
 }
 module "mine" {
+  providers = {
+    github = github.personal
+  }
   source            = "../../"
   org               = false
   include_archived  = false
   github_username   = "brucellino"
-  cloudflare_domain = "brucellino.dev"
+  cloudflare_domain = var.domain
 }
 
 module "hah" {
@@ -85,5 +90,5 @@ module "hah" {
   github_username   = "hashi-at-home"
   org               = true
   include_archived  = false
-  cloudflare_domain = "hashiatho.me"
+  cloudflare_domain = var.domain
 }
