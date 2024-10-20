@@ -1,4 +1,4 @@
-job "cloudflared" {
+job "cloudflared-${github_user}" {
   datacenters = ["dc1"]
   type        = "service"
   update {
@@ -61,7 +61,7 @@ job "cloudflared" {
       driver = "docker"
 
       config {
-        dns_servers = ["100.100.100.100"]
+        // dns_servers = ["100.100.100.100"]
         image = "cloudflare/cloudflared"
         ports = ["metrics"]
         args = [
