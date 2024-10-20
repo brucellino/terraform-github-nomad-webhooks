@@ -27,8 +27,8 @@ jobs:
         run: ./consul agent -server -dev &
       - name: Get Terraform
         run: |
-          curl -fSL https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip \
-          | gunzip -> terraform ; chmod u+x terraform
+          wget https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
+          unzip -j terraform_1.9.5_linux_amd64.zip terraform
       - name: Init terraform
         run: ./terraform -chdir=examples/${{ matrix.example }} init -upgrade
       - name: Validate terraform
