@@ -166,7 +166,7 @@ export default {
             }; // dispatch body
             console.log(dispatch);
             const nomad_response = await fetch(
-              "https://dispatch-workload-brucellino.brucellino.dev/v1/job/" + nomad_job + "/dispatch",
+              "https://dispatch-workload-${owner}.${domain}/v1/job/" + nomad_job + "/dispatch",
               dispatch
             );
             const nomad_res = await readRequestBody(nomad_response);

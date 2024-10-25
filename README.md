@@ -45,11 +45,11 @@ examples themselves
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | ~> 4.44.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
-| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | ~> 2.4.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.5 |
-| <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 4.0 |
+| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 4.44.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 6.3.1 |
+| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | 2.4.0 |
+| <a name="provider_random"></a> [random](#provider\_random) | 3.6.3 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 4.4.0 |
 
 ## Modules
 

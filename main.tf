@@ -98,7 +98,11 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "dispatch" {
 resource "cloudflare_workers_script" "handle_webhooks" {
   account_id = data.cloudflare_accounts.mine.accounts[0].id
   name       = "github_handle_incoming_webhooks_${var.github_username}"
-  content    = templatefile("${path.module}/scripts/handle_incoming_webhooks.js.tmpl", { tunnel_url = cloudflare_zero_trust_tunnel_cloudflared.dispatch.cname })
+  content = templatefile("${path.module}/scripts/handle_incoming_webhooks.js.tmpl", {
+    tunnel_url = cloudflare_zero_trust_tunnel_cloudflared.dispatch.cname,
+    domain     = var.cloudflare_domain,
+    owner      = var.github_username
+  })
   kv_namespace_binding {
     name         = "WORKERS"
     namespace_id = cloudflare_workers_kv_namespace.github.id

@@ -50,6 +50,7 @@ data "vault_kv_secret_v2" "cloudflare" {
   name  = var.domain
 }
 
+
 provider "cloudflare" {
   api_token = data.vault_kv_secret_v2.cloudflare.data.github_runner_token
 }
