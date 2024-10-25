@@ -61,7 +61,7 @@ job "cloudflared-${github_user}" {
       driver = "docker"
 
       config {
-        dns_servers = ["127.0.0.53"]
+        dns_servers = ["consul.service.consul"]
         image = "cloudflare/cloudflared"
         ports = ["metrics"]
         args = [
