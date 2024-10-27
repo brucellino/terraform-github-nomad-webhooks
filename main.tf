@@ -76,6 +76,19 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "dispatch" {
   config_src = "cloudflare"
 }
 
+resource "cloudflare_record" "tunnel_public" {
+  zone_id = data.cloudflare_zone.webhook_listener.zone_id
+  name    = "dispatch-workload-${var.github_username}"
+  # content = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
+  data {
+    target = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
+  }
+  proxied = true
+  comment = "Created by Terraform"
+  type    = "CNAME"
+  ttl     = 1
+}
+
 
 # Cloudflared zero trust tunnel configuration.
 # Used to configure the actual tunnel.
@@ -86,10 +99,19 @@ resource "cloudflare_zero_trust_tunnel_cloudflared_config" "dispatch" {
     ingress_rule {
       hostname = "dispatch-workload-${var.github_username}.${var.cloudflare_domain}"
       path     = "/"
-      service  = "http://bare:4646"
+      service  = "http://nomad.service.consul:4646"
+      origin_request {
+        bastion_mode             = false
+        disable_chunked_encoding = true
+        http2_origin             = false
+        keep_alive_connections   = 0
+        no_happy_eyeballs        = true
+        no_tls_verify            = true
+        proxy_port               = 0
+      }
     }
     ingress_rule {
-      service = "http://bare:4646"
+      service = "http://nomad.service.consul:4646"
     }
   }
 }
@@ -115,6 +137,7 @@ resource "cloudflare_workers_script" "handle_webhooks" {
   }
   module = true
 }
+
 
 # Create the domain for the webhook handler.
 # POST from github will go here thanks to the route below
@@ -154,7 +177,7 @@ resource "random_id" "tunnel_secret" {
 # Create the job that runs the tunnel in nomad
 resource "nomad_job" "cloudflared" {
   jobspec = templatefile("${path.module}/jobspec/tunnel-job.hcl", {
-    token       = cloudflare_zero_trust_tunnel_cloudflared.dispatch.tunnel_token
+    token       = cloudflare_zero_trust_tunnel_cloudflared.dispatch.tunnel_token,
     github_user = var.github_username
   })
 }
