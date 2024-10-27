@@ -79,10 +79,10 @@ resource "cloudflare_zero_trust_tunnel_cloudflared" "dispatch" {
 resource "cloudflare_record" "tunnel_public" {
   zone_id = data.cloudflare_zone.webhook_listener.zone_id
   name    = "dispatch-workload-${var.github_username}"
-  # content = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
-  data {
-    target = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
-  }
+  content = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
+  # data {
+  #   target = "${cloudflare_zero_trust_tunnel_cloudflared.dispatch.id}.cfargotunnel.com"
+  # }
   proxied = true
   comment = "Created by Terraform"
   type    = "CNAME"
