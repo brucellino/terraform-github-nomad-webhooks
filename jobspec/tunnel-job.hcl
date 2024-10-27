@@ -37,7 +37,7 @@ job "cloudflared-${github_user}" {
 
     task "tunnel" {
       service {
-        name = "cloudflared-nomad"
+        name = "cloudflared-nomad-${github_user}"
         tags = ["cloudflared", "nomad"]
         port = "cloudflared"
 
@@ -58,7 +58,7 @@ job "cloudflared-${github_user}" {
         mode     = "fail"
       }
 
-      driver = "docker"
+      driver = "raw_exec"
 
       config {
         dns_servers = ["consul.service.consul"]
