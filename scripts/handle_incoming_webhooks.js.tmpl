@@ -105,7 +105,7 @@ export default {
       const secret = await env.WORKERS.get("github_webhook_secret");
       const _event = request.headers.get("x-github-event");
       const _delivery = request.headers.get("x-github-delivery")
-      if ( _event == "workflow_job") {
+      if (_event == "workflow_job") {
         console.log(`This was a $${_event} event`);
         const payload = await request.json();
         // Verify the Payload using the webhook secret as key
@@ -125,9 +125,6 @@ export default {
           console.log(payload.action);
           const action_ok = permitted_actions.some((r) => payload.action);
           const permitted_labels = ["self-hosted", "hah"];
-          // const labels_ok = permitted_labels.some(
-          //   (r) => payload.workflow_job.labels
-          // );
           const labels_ok = payload.workflow_job.labels.some(
             (r) => permitted_labels.includes(r)
           );
@@ -173,16 +170,17 @@ export default {
             console.log(nomad_res);
             if (nomad_response.status != 200) {
               console.log("response was " + nomad_response.status)
-            }
-          }
-          // console.log(JSON.stringify(await nomad_response.Response.json()))
-          return new Response("OK");
-        } else {
+              return new Response("Failed to dispatch workflow", { status: nomad_response.status });
+            } else {
+              return new Response("Accepted event OK", { status: 202 });
+            } // if nomad said no
+          } // labels and action ok
+        } else { // hash not ok
           return new Response("Failed to verify Signature", { status: 403 });
-        }// If (verify signature)
+        } // If (verify signature)
       } else {
         console.log("Not a workflow job event");
-        return new Response("OK")
+        return new Response(`event was $${payload.action}`, { status: 200 });
       }
     }
   },

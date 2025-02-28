@@ -66,3 +66,14 @@ module "mine" {
   github_username   = "brucellino"
   cloudflare_domain = "brucellino.dev"
 }
+
+module "hah" {
+  providers = {
+    github = github.hah
+  }
+  source            = "../../"
+  org               = true
+  include_archived  = false
+  github_username   = "hashi-at-home"
+  cloudflare_domain = "brucellino.dev"
+}
