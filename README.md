@@ -37,7 +37,7 @@ examples themselves
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
 | <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5.3.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
-| <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.4.0 |
+| <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.5.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
 | <a name="requirement_vault"></a> [vault](#requirement\_vault) | ~> 4.0 |
 
@@ -47,7 +47,7 @@ examples themselves
 |------|---------|
 | <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | ~> 5.3.0 |
 | <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
-| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | ~> 2.4.0 |
+| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | ~> 2.5.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | ~> 3.5 |
 | <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 4.0 |
 
