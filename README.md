@@ -35,7 +35,7 @@ examples themselves
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
-| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5 |
+| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5.12.0 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.5.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |

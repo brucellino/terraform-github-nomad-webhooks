@@ -14,7 +14,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5"
+      version = "~> 5.12.0"
     }
 
     random = {
