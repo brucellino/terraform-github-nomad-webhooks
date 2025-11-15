@@ -17,7 +17,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4"
+      version = "~> 5.1"
     }
     nomad = {
       source  = "hashicorp/nomad"
@@ -67,13 +67,13 @@ module "mine" {
   cloudflare_domain = "brucellino.dev"
 }
 
-module "hah" {
-  providers = {
-    github = github.hah
-  }
-  source            = "../../"
-  org               = true
-  include_archived  = false
-  github_username   = "hashi-at-home"
-  cloudflare_domain = "brucellino.dev"
-}
+# module "hah" {
+#   providers = {
+#     github = github.hah
+#   }
+#   source            = "../../"
+#   org               = true
+#   include_archived  = false
+#   github_username   = "hashi-at-home"
+#   cloudflare_domain = "brucellino.dev"
+# }

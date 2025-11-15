@@ -35,7 +35,7 @@ examples themselves
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >1.6.0 |
-| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5.9.0 |
+| <a name="requirement_cloudflare"></a> [cloudflare](#requirement\_cloudflare) | ~> 5 |
 | <a name="requirement_github"></a> [github](#requirement\_github) | ~> 6.0 |
 | <a name="requirement_nomad"></a> [nomad](#requirement\_nomad) | ~> 2.5.0 |
 | <a name="requirement_random"></a> [random](#requirement\_random) | ~> 3.5 |
@@ -45,11 +45,9 @@ examples themselves
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | ~> 5.9.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
-| <a name="provider_nomad"></a> [nomad](#provider\_nomad) | ~> 2.5.0 |
-| <a name="provider_random"></a> [random](#provider\_random) | ~> 3.5 |
-| <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 5.0 |
+| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 5.9.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | 6.6.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | 5.2.1 |
 
 ## Modules
 
@@ -59,22 +57,7 @@ No modules.
 
 | Name | Type |
 |------|------|
-| [cloudflare_record.tunnel_public](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/record) | resource |
-| [cloudflare_workers_domain.handle_webhooks](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_domain) | resource |
-| [cloudflare_workers_kv.actions_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
-| [cloudflare_workers_kv.github_webhook_secret](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
-| [cloudflare_workers_kv.job_name](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
-| [cloudflare_workers_kv.webhook_ips](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv) | resource |
-| [cloudflare_workers_kv_namespace.github](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_kv_namespace) | resource |
-| [cloudflare_workers_script.handle_webhooks](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/workers_script) | resource |
-| [cloudflare_zero_trust_tunnel_cloudflared.dispatch](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/zero_trust_tunnel_cloudflared) | resource |
-| [cloudflare_zero_trust_tunnel_cloudflared_config.dispatch](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/resources/zero_trust_tunnel_cloudflared_config) | resource |
-| [github_repository_webhook.cf](https://registry.terraform.io/providers/integrations/github/latest/docs/resources/repository_webhook) | resource |
-| [nomad_job.cloudflared](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job) | resource |
-| [nomad_job.runner_dispatch](https://registry.terraform.io/providers/hashicorp/nomad/latest/docs/resources/job) | resource |
-| [random_id.tunnel_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/id) | resource |
-| [random_pet.github_secret](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/pet) | resource |
-| [cloudflare_accounts.mine](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/accounts) | data source |
+| [cloudflare_account.mine](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/account) | data source |
 | [cloudflare_zone.webhook_listener](https://registry.terraform.io/providers/cloudflare/cloudflare/latest/docs/data-sources/zone) | data source |
 | [github_ip_ranges.theirs](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/ip_ranges) | data source |
 | [github_repositories.selected](https://registry.terraform.io/providers/integrations/github/latest/docs/data-sources/repositories) | data source |
