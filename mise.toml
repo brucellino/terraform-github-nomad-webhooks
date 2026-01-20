@@ -5,7 +5,7 @@ _.python.venv = { path = ".venv", create = true }
 python = "3.13"
 uv = "latest"
 terraform = "1.14"
-consul = "1.21.1"
+consul = "1.22.2"
 node = "24"
 
 [tasks]
