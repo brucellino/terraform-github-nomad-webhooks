@@ -1,7 +1,7 @@
 terraform {
   required_version = "~> 1.9"
   backend "consul" {
-    path = "terraform_github_nomad_webhooks/simple"
+    path = "terraform_github_nomad_webhooks/org"
   }
   required_providers {
     # We need github to provide access to github
@@ -17,7 +17,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5.1"
+      version = "~> 4"
     }
     nomad = {
       source  = "hashicorp/nomad"
@@ -26,26 +26,32 @@ terraform {
   }
 }
 
+variable "domain" {
+  description = "The domain you will be deploying to. You must already own this domain."
+  default     = "brucellino.dev"
+  type        = string
+}
+
+variable "secrets_mount" {
+  type        = string
+  description = "Name of the vault mount where the github secrets are kept."
+  default     = "hashiatho.me-v2"
+}
+
 provider "vault" {}
 # Use vault to get the secrets for configuring the other providers
 data "vault_kv_secret_v2" "github" {
-  mount = "hashiatho.me-v2"
+  mount = var.secrets_mount
   name  = "github"
 }
 
 data "vault_kv_secret_v2" "cloudflare" {
-  mount = "hashiatho.me-v2"
-  name  = "cloudflare"
+  mount = "cloudflare"
+  name  = var.domain
 }
-
 
 provider "cloudflare" {
-  api_token = data.vault_kv_secret_v2.cloudflare.data.api_token
-}
-
-provider "github" {
-  token = data.vault_kv_secret_v2.github.data.gh_token
-  alias = "personal"
+  api_token = data.vault_kv_secret_v2.cloudflare.data.github_runner_token
 }
 
 provider "github" {
@@ -56,24 +62,17 @@ provider "github" {
 
 provider "nomad" {}
 
-module "mine" {
+moved {
+  from = module.example
+  to   = module.mine
+}
+module "hah" {
   providers = {
-    github = github.personal
+    github = github.hah
   }
   source            = "../../"
-  org               = false
+  github_username   = "hashi-at-home"
+  org               = true
   include_archived  = false
-  github_username   = "brucellino"
-  cloudflare_domain = "brucellino.dev"
+  cloudflare_domain = var.domain
 }
-
-# module "hah" {
-#   providers = {
-#     github = github.hah
-#   }
-#   source            = "../../"
-#   org               = true
-#   include_archived  = false
-#   github_username   = "hashi-at-home"
-#   cloudflare_domain = "brucellino.dev"
-# }

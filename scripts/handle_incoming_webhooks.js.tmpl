@@ -93,10 +93,10 @@ export default {
       }
     }
 
-    const { url } = request;
-    if (url.includes("form")) {
-      return rawHtmlResponse(someForm);
-    }
+
+    // if (url.includes("form")) {
+    //   return rawHtmlResponse(someForm);
+    // }
 
     if (request.method === "GET") {
       return new Response("OK", { status: 226 });
@@ -105,8 +105,8 @@ export default {
       const secret = await env.WORKERS.get("github_webhook_secret");
       const _event = request.headers.get("x-github-event");
       const _delivery = request.headers.get("x-github-delivery")
-      if ( _event == "workflow_job") {
-        console.log(`This was a ${_event} event`);
+      if (_event == "workflow_job") {
+        console.log(`This was a $${_event} event`);
         const payload = await request.json();
         // Verify the Payload using the webhook secret as key
         if (
@@ -125,9 +125,6 @@ export default {
           console.log(payload.action);
           const action_ok = permitted_actions.some((r) => payload.action);
           const permitted_labels = ["self-hosted", "hah"];
-          // const labels_ok = permitted_labels.some(
-          //   (r) => payload.workflow_job.labels
-          // );
           const labels_ok = payload.workflow_job.labels.some(
             (r) => permitted_labels.includes(r)
           );
@@ -136,7 +133,7 @@ export default {
           if (labels_ok && action_ok) {
             console.log("constructing message");
             // if (permitted_actions.includes(payload.action)) {
-            console.log(`${payload.action}`);
+            console.log(`$${payload.action}`);
             const data = btoa(
               JSON.stringify({
                 repo: payload.repository.full_name,
@@ -151,10 +148,8 @@ export default {
             const dispatch = {
               method: "POST",
               headers: {
-                Authorization: "Bearer " + nomad_acl_token,
-                "Content-Type": "application/json;charset=UTF-8",
-                "CF-Access-Client-Id": access_client_id,
-                "CF-Access-Client-Secret": access_client_secret,
+                'X-Nomad-Token': nomad_acl_token,
+                'Content-Type': "application/json;charset=UTF-8",
               },
               body: JSON.stringify({
                 Payload: data,
@@ -167,25 +162,25 @@ export default {
               }),
             }; // dispatch body
             console.log(dispatch);
-            console.log(
-              "https://nomad.brucellino.dev/v1/job/" + nomad_job + "/dispatch",
-              dispatch
-            );
             const nomad_response = await fetch(
-              "https://nomad.brucellino.dev/v1/job/" + nomad_job + "/dispatch",
+              "https://dispatch-workload-${owner}.${domain}/v1/job/" + nomad_job + "/dispatch",
               dispatch
             );
             const nomad_res = await readRequestBody(nomad_response);
             console.log(nomad_res);
-          }
-          // console.log(JSON.stringify(await nomad_response.Response.json()))
-          return new Response("OK");
-        } else {
+            if (nomad_response.status != 200) {
+              console.log("response was " + nomad_response.status)
+              return new Response("Failed to dispatch workflow", { status: nomad_response.status });
+            } else {
+              return new Response("Accepted event OK", { status: 202 });
+            } // if nomad said no
+          } // labels and action ok
+        } else { // hash not ok
           return new Response("Failed to verify Signature", { status: 403 });
-        }// If (verify signature)
+        } // If (verify signature)
       } else {
         console.log("Not a workflow job event");
-        return new Response("OK")
+        return new Response(`event was $${payload.action}`, { status: 200 });
       }
     }
   },

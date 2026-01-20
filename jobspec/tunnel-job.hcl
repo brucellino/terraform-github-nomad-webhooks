@@ -1,8 +1,13 @@
-job "cloudflared" {
+job "cloudflared-${github_user}" {
   datacenters = ["dc1"]
   type        = "service"
+
+  constraint {
+    attribute = "$${attr.cpu.arch}"
+    value = "arm64"
+  }
   update {
-    max_parallel      = 3
+    max_parallel      = 2
     health_check      = "checks"
     min_healthy_time  = "10s"
     healthy_deadline  = "5m"
@@ -13,7 +18,7 @@ job "cloudflared" {
     stagger           = "30s"
   }
   group "nomad" {
-    count =2
+    count = 1
     reschedule {
       attempts       = 1
       interval       = "1m"
@@ -37,7 +42,7 @@ job "cloudflared" {
 
     task "tunnel" {
       service {
-        name = "cloudflared-nomad"
+        name = "cloudflared-nomad-${github_user}"
         tags = ["cloudflared", "nomad"]
         port = "cloudflared"
 
@@ -58,29 +63,42 @@ job "cloudflared" {
         mode     = "fail"
       }
 
-      driver = "docker"
+      driver = "raw_exec"
 
+      template {
+        change_mode = "noop"
+        data =<<EOT
+#!/bin/bash
+echo "starting cloudflared"
+
+ls -lht {{ env "NOMAD_TASK_DIR "}}
+chmod -v u+x {{ env "NOMAD_TASK_DIR" }}/cloudflared
+{{ env "NOMAD_TASK_DIR" }}/cloudflared \
+  tunnel \
+  --autoupdate-freq 24h \
+  --loglevel info \
+  --metrics 0.0.0.0:{{ env "NOMAD_PORT_metrics" }} \
+  run --token ${token}
+        EOT
+        destination = "$${NOMAD_TASK_DIR}/start.sh"
+        perms = "0777"
+      }
+
+      artifact {
+        source = "https://github.com/cloudflare/cloudflared/releases/download/2024.10.1/cloudflared-linux-$${attr.cpu.arch}"
+        destination = "$${NOMAD_TASK_DIR}/cloudflared"
+        options {
+          checksum = "sha256:80b2014200be8851886d441cf5df54652e014444105eebc43f15081d1e2af6a8"
+        }
+        mode = "file"
+      }
       config {
-        dns_servers = ["100.100.100.100"]
-        image = "cloudflare/cloudflared"
-        ports = ["metrics"]
-        args = [
-          "tunnel",
-          "--autoupdate-freq",
-          "24h",
-          "--loglevel",
-          "info",
-          "--metrics",
-          "0.0.0.0:$${NOMAD_PORT_metrics}",
-          "run",
-          "--token",
-          "${token}",
-        ]
+        command = "$${NOMAD_TASK_DIR}/start.sh"
       }
 
       resources {
-        cpu    = 100
-        memory = 64
+        cpu    = 125
+        memory = 256
       }
     }
   }

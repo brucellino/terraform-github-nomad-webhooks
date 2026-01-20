@@ -13,10 +13,10 @@ jobs:
         example:
           - simple
     name: validate
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: 'actions/checkout@v4'
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Get Consul
@@ -27,8 +27,8 @@ jobs:
         run: ./consul agent -server -dev &
       - name: Get Terraform
         run: |
-          curl -fSL https://releases.hashicorp.com/terraform/1.6.2/terraform_1.6.2_linux_amd64.zip \
-          | gunzip -> terraform ; chmod u+x terraform
+          wget https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
+          unzip -j terraform_1.9.5_linux_amd64.zip terraform
       - name: Init terraform
         run: ./terraform -chdir=examples/${{ matrix.example }} init -upgrade
       - name: Validate terraform
@@ -40,13 +40,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: 'lts/*'
+          node-version: lts/*
       - name: Install dependencies
         run: |
           npm install -D '@semantic-release/commit-analyzer' \
