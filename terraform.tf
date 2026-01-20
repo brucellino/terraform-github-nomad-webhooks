@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">1.6.0"
+  required_version = "~> 1.14"
   required_providers {
     # We need github to provide access to github
     github = {
@@ -23,7 +23,7 @@ terraform {
     }
     nomad = {
       source  = "hashicorp/nomad"
-      version = "~> 2.5.0"
+      version = "~> 2"
     }
   }
 }

@@ -19,6 +19,8 @@ repos:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_trivy
+        args:
+          - --args=--skip-dirs=".venv"
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: v0.21.0
     hooks:
