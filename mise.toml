@@ -2,7 +2,7 @@
 _.python.venv = { path = ".venv", create = true }
 
 [tools]
-python = "3.13"
+python = "3.14.2"
 uv = "latest"
 terraform = "1.14"
 consul = "1.22.2"
