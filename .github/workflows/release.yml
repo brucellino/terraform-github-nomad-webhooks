@@ -19,20 +19,17 @@ jobs:
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
-      - name: Get Consul
-        run: |
-          curl -fSL https://releases.hashicorp.com/consul/1.17.0/consul_1.17.0_linux_amd64.zip \
-          | gunzip -> consul ; chmod u+x consul
+      - name: Setup build env
+        uses: jdx/mise-action@v3
+        with:
+          install: true
+          experimental: true
       - name: Start Consul dev server
-        run: ./consul agent -server -dev &
-      - name: Get Terraform
-        run: |
-          wget https://releases.hashicorp.com/terraform/1.9.5/terraform_1.9.5_linux_amd64.zip
-          unzip -j terraform_1.9.5_linux_amd64.zip terraform
+        run: consul agent -server -dev &
       - name: Init terraform
-        run: ./terraform -chdir=examples/${{ matrix.example }} init -upgrade
+        run: terraform -chdir=examples/${{ matrix.example }} init -upgrade
       - name: Validate terraform
-        run: ./terraform -chdir=examples/${{ matrix.example }} validate
+        run: terraform -chdir=examples/${{ matrix.example }} validate
   release:
     needs:
       - validate

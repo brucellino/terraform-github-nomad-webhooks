@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.9"
+  required_version = "~> 1.14"
   backend "consul" {
     path = "terraform_github_nomad_webhooks/org"
   }
@@ -12,12 +12,12 @@ terraform {
     # we're going to need vault to read and write secrets
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 4"
+      version = "~> 5"
     }
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 4"
+      version = "~> 5"
     }
     nomad = {
       source  = "hashicorp/nomad"

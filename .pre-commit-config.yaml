@@ -19,6 +19,8 @@ repos:
       - id: terraform_fmt
       - id: terraform_validate
       - id: terraform_trivy
+        args:
+          - --args=--skip-dirs=".venv"
   - repo: https://github.com/terraform-docs/terraform-docs
     rev: v0.21.0
     hooks:
@@ -29,7 +31,7 @@ repos:
     hooks:
       - id: check-github-workflows
   - repo: https://github.com/alessandrojcm/commitlint-pre-commit-hook
-    rev: v9.23.0
+    rev: v9.24.0
     hooks:
       - id: commitlint
         language_version: 22.8.0
