@@ -45,9 +45,9 @@ examples themselves
 
 | Name | Version |
 |------|---------|
-| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | 5.14.0 |
-| <a name="provider_github"></a> [github](#provider\_github) | 6.10.1 |
-| <a name="provider_vault"></a> [vault](#provider\_vault) | 5.6.0 |
+| <a name="provider_cloudflare"></a> [cloudflare](#provider\_cloudflare) | ~> 5.14.0 |
+| <a name="provider_github"></a> [github](#provider\_github) | ~> 6.0 |
+| <a name="provider_vault"></a> [vault](#provider\_vault) | ~> 5.0 |
 
 ## Modules
 
