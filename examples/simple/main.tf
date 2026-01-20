@@ -12,12 +12,12 @@ terraform {
     # we're going to need vault to read and write secrets
     vault = {
       source  = "hashicorp/vault"
-      version = "~> 4"
+      version = "~> 5"
     }
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5.1"
+      version = "~> 5"
     }
     nomad = {
       source  = "hashicorp/nomad"
