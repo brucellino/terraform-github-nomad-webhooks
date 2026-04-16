@@ -22,7 +22,7 @@ repos:
         args:
           - --args=--skip-dirs=".venv"
   - repo: https://github.com/terraform-docs/terraform-docs
-    rev: v0.21.0
+    rev: v0.22.0
     hooks:
       - id: terraform-docs-go
         args: ["markdown", "--output-file", "README.md", "."]
