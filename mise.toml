@@ -4,7 +4,7 @@ _.python.venv = { path = ".venv", create = true }
 [tools]
 python = "3.14.2"
 uv = "latest"
-terraform = "1.14"
+terraform = "1.16.5"
 consul = "1.22.2"
 node = "24"
 
