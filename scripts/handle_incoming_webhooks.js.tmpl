@@ -36,7 +36,8 @@ export default {
       );
 
       return equal;
-    }
+    } // verifySignature
+
     // from https://docs.github.com/en/webhooks/using-webhooks/validating-webhook-deliveries#validating-webhook-deliveries
     function hexToBytes(hex) {
       let len = hex.length / 2;
@@ -51,7 +52,7 @@ export default {
       }
 
       return bytes;
-    }
+    } // hexToBytes
 
     function rawHtmlResponse(html) {
       return new Response(html, {
@@ -59,13 +60,13 @@ export default {
           "content-type": "text/html;charset=UTF-8",
         },
       });
-    }
+    } // rawHtmlResponse
 
     /**
      * readRequestBody reads in the incoming request body
      * Use await readRequestBody(..) in an async function to get the string
      * @param {Request} request the incoming request to read from
-     */
+    */
     async function readRequestBody(request) {
       console.log("getting request body");
       const contentType = request.headers.get("Content-Type");
@@ -91,7 +92,7 @@ export default {
         console.log(request.status)
         return "a file";
       }
-    }
+    } // readRequestBody
 
 
     // if (url.includes("form")) {
@@ -108,7 +109,8 @@ export default {
       if (_event == "workflow_job") {
         console.log(`This was a $${_event} event`);
         const payload = await request.json();
-        // Verify the Payload using the webhook secret as key
+
+        // If the payload is verified, proceed
         if (
           verifySignature(
             secret,
@@ -118,8 +120,11 @@ export default {
         ) {
           // Get headers and see what kind of event this was
           console.log("Payload verified");
+          // Check whether the request contains a cloudflare access token.
+          // In preparation for future implementation where Nomad API expects authenticated calls.
           const access_client_id = env.CF_ACCESS_CLIENT_ID;
           const access_client_secret = env.CF_ACCESS_CLIENT_SECRET;
+          // The Nomad API token is stored as a variable
           const nomad_acl_token = env.NOMAD_ACL_TOKEN;
           const permitted_actions = ["queued"];
           console.log(payload.action);
