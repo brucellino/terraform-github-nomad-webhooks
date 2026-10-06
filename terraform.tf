@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.14"
+  required_version = "~> 1.16"
   required_providers {
     # We need github to provide access to github
     github = {
@@ -14,7 +14,7 @@ terraform {
     # Cloudflare will be used to create a few
     cloudflare = {
       source  = "cloudflare/cloudflare"
-      version = "~> 5.16.0"
+      version = ">= 5"
     }
 
     random = {

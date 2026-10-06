@@ -1,5 +1,5 @@
 terraform {
-  required_version = "~> 1.14"
+  required_version = "~> 1.16"
   backend "consul" {
     path = "terraform_github_nomad_webhooks/org"
   }
