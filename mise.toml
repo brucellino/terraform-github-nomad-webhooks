@@ -2,5 +2,5 @@
 
 [tools]
 terraform = "1.16.6"
-consul = "2.0.4"
+consul = "2.1.0"
 prek = "0.5.6"
